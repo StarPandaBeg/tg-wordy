@@ -117,7 +117,7 @@ class WordyBot:
             await self.bot.edit_message_text(self._["complete"], out.chat.id, out.message_id)
         except:
             out = await self.bot.reply_to(out, self._["complete"])
-        await self.bot.send_document(out.chat.id, (f"{fname}.docx", f), reply_to_message_id=out.message_id, caption="Made with @wordypicture_bot")
+        await self.bot.send_document(out.chat.id, (f"{fname}.docx", f), reply_to_message_id=out.message_id, caption="Made with @wordypicture_bot", reply_markup=ReplyKeyboardRemove())
     
         self.db.clear_cache(message.user)
         rm_if_exists(f"tmp/{message.user.id}", True)
