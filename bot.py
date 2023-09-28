@@ -5,7 +5,7 @@ from telebot.async_telebot import AsyncTeleBot
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 
 from docx import Document as DDocument
-from docx.shared import Inches
+from docx.shared import Mm
 
 from bottypes import Message
 from db import Database
@@ -23,6 +23,10 @@ def gen_markup():
     markup = ReplyKeyboardMarkup(one_time_keyboard=True)
     markup.add(KeyboardButton(CONFIRM_TEXT))
     return markup
+
+def get_image_height(document):
+    section = document.sections[0]
+    return (section.page_height - section.top_margin - section.bottom_margin) / 36000
 
 class WordyBot:
 
@@ -101,7 +105,7 @@ class WordyBot:
         doc = DDocument()
         for msg in self.db.get_prepared_cache(message.user):
             await download_image(self.bot, message.user.id, msg.photo, msg.photo_unique_id)
-            doc.add_picture(f"tmp/{message.user.id}/{msg.photo_unique_id}.png", width=Inches(7))
+            doc.add_picture(f"tmp/{message.user.id}/{msg.photo_unique_id}.png", height=Mm(get_image_height(doc)))
         f = BytesIO()
         doc.save(f)
         f.seek(0)
